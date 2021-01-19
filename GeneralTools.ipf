@@ -932,3 +932,82 @@ function /wave getParamImages(S_matchStr,V_startP ,V_endP, V_startQ ,V_endQ, F_p
 	killwaves W_res, W_res_x
 	return $S_baseWN
 end
+
+function /wave WaveStats_Waves(L_waves, WN_param, F_param)
+	string L_waves, WN_param
+	variable F_param
+	duplicate /O $StringFromList(0, L_waves), $WN_param
+	wave W_param=$WN_param
+	W_param=WaveStats_Wave_p(L_waves, p, F_param)
+	return W_param
+end
+
+threadsafe function WaveStats_Wave_p(L_waves, V_p, F_param)
+	string L_waves
+	variable V_p, F_param
+	variable V_nWaves=ItemsInList(L_waves)
+	make /O/D/n=(V_nWaves) W_data
+
+	variable i
+	for(i=0;i< V_nWaves;i+=1)
+		//print StringFromList(i, L_waves)
+		wave W_tmp=$StringFromList(i, L_waves)
+		W_data[i]=W_tmp[V_p]
+	endfor
+	wavestats /Q W_data
+	//print V_sdev
+	switch(F_param)	// numeric switch
+		case 0:	//V_avg
+			return V_avg
+			break
+		case 1:	//V_sdev
+			return V_sdev
+			break
+		case 2:	//V_max
+			return V_max
+			break
+		case 3:	//V_min
+			return V_min
+			break
+		default:
+			return 0
+	endswitch
+	
+end
+
+function ZapPeriodFilename()
+	string L_waves=WaveList("*.*", ";", "")
+	variable V_nWaves=itemsinlist(L_waves)
+	variable i, j, V_nPeriod
+	String WN_NewWave=""
+	String WN_OldWave
+	for(i=0;i<V_nWaves;i+=1)
+		WN_OldWave= StringFromList(i, L_waves)
+		V_nPeriod=itemsinlist(StringFromList(i, L_waves), ".")
+		print V_nPeriod
+		WN_NewWave=""
+		for(j=0;j<V_nPeriod;j+=1)
+			WN_NewWave+=StringFromList(j, WN_OldWave, ".")
+		endfor
+		print V_nPeriod,WN_OldWave, "->", WN_NewWave
+		rename $WN_OldWave, $WN_NewWave
+	endfor
+end
+
+function ReplaceString_Filename(S_Old, S_New)
+	string S_Old, S_New
+	string L_waves=WaveList("*"+S_Old+"*", ";", "")
+	variable V_nWaves=itemsinlist(L_waves)
+	print V_nWaves
+	variable i, j, V_nPeriod
+	String WN_NewWave=""
+	String WN_OldWave
+	for(i=0;i<V_nWaves;i+=1)
+		WN_OldWave= StringFromList(i, L_waves)
+		V_nPeriod=itemsinlist(StringFromList(i, L_waves), S_Old)
+		//print V_nPeriod
+		WN_NewWave=ReplaceString(S_Old, WN_OldWave, S_New)
+		print V_nPeriod,WN_OldWave, "->", WN_NewWave
+		rename $WN_OldWave, $WN_NewWave
+	endfor
+end
