@@ -18,9 +18,9 @@ function /S genSdate(ctrlName)
 	string L_date=date()
 	string /G S_year, S_month, S_date
 	variable V_place=0
-	L_date=ReplaceString("îN", L_date, ";")
-	L_date=ReplaceString("åé", L_date, ";")
-	L_date=RemoveEnding(L_date, "ì˙")
+	L_date=ReplaceString("‚ÄùN", L_date, ";")
+	L_date=ReplaceString("≈í≈Ω", L_date, ";")
+	L_date=RemoveEnding(L_date, "‚Äú√∫")
 	//print L_date
 	S_year=StringFromList(0, L_date)
 	S_month=StringFromList(1, L_date)
@@ -878,4 +878,57 @@ function FindOptTolerance(W_Src, V_findVal, V_nValues, V_iniTol)
 	else
 		return V_Root
 	endif
+end
+
+function /wave getParamImages(S_matchStr,V_startP ,V_endP, V_startQ ,V_endQ, F_param)
+	string S_matchStr
+	variable V_startP ,V_endP, V_startQ ,V_endQ, F_param
+	string L_wlist= WaveList(S_matchStr, ";", "" )//	ex WaveList("M_down*_crs", ";", "" )
+	variable V_n=itemsInList(L_wlist)
+	variable V_n_a=itemsInList(S_matchStr, "*")
+	print V_n, V_n_a
+	make /O/D/n=(V_n) W_res, W_res_x
+	string S_tmp, S_baseWN, S_suffix
+	variable i, j, k
+	for(i=0;i<V_n;i+=1)
+		string S_wave=stringfromlist(i, L_wlist)
+		wave W_wave=$S_wave
+		imagestats /G={V_startP ,V_endP, V_startQ ,V_endQ} W_wave
+		for(j=0,S_baseWN="";j<V_n_a;j+=1)
+			S_tmp=stringfromlist(j, S_matchStr,"*")
+			S_baseWN+=S_tmp
+			S_wave=ReplaceString(S_tmp, S_wave, "")
+		endfor
+		W_res_x[i]=str2num(S_wave)
+		switch(F_param)	// numeric switch
+			case 0:	// execute if case matches expression
+				W_res[i]=V_avg
+				S_suffix="_avg"
+				print i, nameofwave(W_wave), V_avg, str2num(S_wave)
+				break		// exit from switch
+			case 1:	// execute if case matches expression
+				W_res[i]=V_sdev
+				S_suffix="_sdev"
+				print i, nameofwave(W_wave), V_sdev, str2num(S_wave)
+				break
+			case 2:	// execute if case matches expression
+				W_res[i]=V_avg-V_max
+				S_suffix="_max"
+				print i, nameofwave(W_wave), V_avg-V_max, str2num(S_wave)
+				break
+			case 3:	// execute if case matches expression
+				W_res[i]=V_avg-V_min
+				S_suffix="_min"
+				print i, nameofwave(W_wave), V_avg-V_min, str2num(S_wave)
+				break
+			default:			// optional default expression executed
+				W_res[i]=nan		// when no case matches
+		endswitch
+		
+	endfor
+	sort W_res_x, W_res, W_res_x
+	duplicate /O W_res, $S_baseWN+S_suffix
+	duplicate /O W_res_x, $S_baseWN+S_suffix+"_x"
+	killwaves W_res, W_res_x
+	return $S_baseWN
 end
