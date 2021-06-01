@@ -1,0 +1,76 @@
+IGOR
+WAVES/T/N=(33,2)	W_PiLabel
+BEGIN
+	"-4π"	"Major"
+	"-15/4 π"	"Subminor"
+	"-7/2 π"	"Major"
+	"-13/4 π"	"Subminor"
+	"-3 π"	"Major"
+	"-11/4 π"	"Subminor"
+	"-5/2 π"	"Major"
+	"-9/4 π"	"Subminor"
+	"-2 π"	"Major"
+	"-7/4 π"	"Subminor"
+	"-3/2 π"	"Major"
+	"-5/4 π"	"Subminor"
+	"- π"	"Major"
+	"-3/4 π"	"Subminor"
+	"-π/2"	"Major"
+	"-π/4"	"Subminor"
+	"0"	"Major"
+	"π/4"	"Subminor"
+	"π/2"	"Major"
+	"3/4 π"	"Subminor"
+	"π"	"Major"
+	"5/4 π"	"Subminor"
+	"3/2 π"	"Major"
+	"7/4 π"	"Subminor"
+	"2 π"	"Major"
+	"9/4 π"	"Subminor"
+	"5/2 π"	"Major"
+	"11/4 π"	"Subminor"
+	"3 π"	"Major"
+	"13/4 π"	"Subminor"
+	"7/2 π"	"Major"
+	"15/4 π"	"Subminor"
+	"4 π"	"Major"
+END
+X SetScale/P x 0,1,"", W_PiLabel; SetScale/P y 0,1,"", W_PiLabel; SetScale d 0,0,"", W_PiLabel
+
+WAVES	W_PiLaPos
+BEGIN
+	-12.56637
+	-11.78097
+	-10.99557
+	-10.21018
+	-9.424778
+	-8.6393805
+	-7.853981
+	-7.068583
+	-6.283185
+	-5.497787
+	-4.712389
+	-3.926991
+	-3.141593
+	-2.356194
+	-1.570796
+	-0.78539819
+	0
+	0.78539819
+	1.570796
+	2.356194
+	3.141593
+	3.926991
+	4.712389
+	5.497787
+	6.283185
+	7.068583
+	7.853981
+	8.6393805
+	9.424778
+	10.21018
+	10.99557
+	11.78097
+	12.56637
+END
+X SetScale/P x 0,1,"", W_PiLaPos; SetScale y 0,0,"", W_PiLaPos

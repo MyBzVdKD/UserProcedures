@@ -1,0 +1,37 @@
+This is one of two special User Procedures folders.
+
+The other is created by Igor 6.1 or later when Igor starts up, and is located here:
+
+	<My Documents>\WaveMetrics\Igor Pro 6 User Files\User Procedures\
+
+A simple way to locate that folder is to choose "Show Igor Pro 6 User Files" from Igor's Help Menu.
+
+You can put Igor procedure files or aliases pointing to procedure files or to
+folders containing procedure files in either of these User Procedures folders.
+
+When Igor is compiling procedures and it encounters a line of the following form:
+
+	#include "a file name"
+
+it will look in both User Procedures folders and in any sub-folders for a procedure
+file of the given name. It will also look at any files or folders referenced
+by aliases. If the procedure file is found, Igor will automatically open it,
+if it is not already open.
+
+Such procedure files are called "shared" procedure files.
+
+NOTE:
+  If you put a procedure file in either User Procedures folder and then #include
+  the file in an experiment then that experiment will require the procedure
+  file to be available when the experiment is opened.
+  
+  If you transfer the experiment to another computer, you will need
+  to transfer the procedure file also. If you forget the procedure
+  file then the experiment will not work on the other computer.
+
+NOTE:
+  It is best if you save your own files in your own folder outside the
+  Igor Pro Folder. This makes it possible for you to upgrade Igor in the
+  future without worrying about losing your own files. 
+  
+  The Igor Pro 6 User Files\User Procedures folder is an ideal place for this.
