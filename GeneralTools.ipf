@@ -1011,3 +1011,18 @@ function ReplaceString_Filename(S_Old, S_New)
 		rename $WN_OldWave, $WN_NewWave
 	endfor
 end
+
+function SortMatrixCol(M_src, V_ColPnt, F_RevSort)
+	wave M_src
+	variable V_ColPnt, F_RevSort
+	duplicate /FREE M_src, W_sortkey
+	Redimension/N=(-1,0) W_sortkey
+	W_sortkey[]=M_src[p][V_ColPnt]
+
+	if(F_RevSort)//big -> small
+		SortColumns /R keyWaves=W_sortkey,sortWaves=M_src
+	else//small -> big
+		SortColumns keyWaves=W_sortkey,sortWaves=M_src
+	endif
+	
+end
