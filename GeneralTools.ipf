@@ -18,9 +18,9 @@ function /S genSdate(ctrlName)
 	string L_date=date()
 	string /G S_year, S_month, S_date
 	variable V_place=0
-	L_date=ReplaceString("”N", L_date, ";")
-	L_date=ReplaceString("ŒŽ", L_date, ";")
-	L_date=RemoveEnding(L_date, "“ú")
+	L_date=ReplaceString("年", L_date, ";")
+	L_date=ReplaceString("月", L_date, ";")
+	L_date=RemoveEnding(L_date, "日")
 	//print L_date
 	S_year=StringFromList(0, L_date)
 	S_month=StringFromList(1, L_date)
@@ -28,6 +28,7 @@ function /S genSdate(ctrlName)
 	//print S_year, S_month, S_date
 	return L_date
 end
+
 
 function /S Convert2Polar(wv)
 	wave /C wv
