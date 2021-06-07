@@ -1027,3 +1027,62 @@ function SortMatrixCol(M_src, V_ColPnt, F_RevSort)
 	endif
 	
 end
+
+function ScaleBarGen(M_Src, V_length, F_pos, F_text)
+	wave M_Src
+	variable V_length, F_pos, F_text
+	//F_pos
+	//0: right-lower
+	//1: left-lower
+	//V_length: in meters
+	variable V_offsetCoef=0.1
+	variable V_nx=dimsize(M_Src, 0)
+	variable V_ny=dimsize(M_Src, 1)
+	variable V_dx=DimDelta(M_Src, 0)
+	variable V_dy=DimDelta(M_Src, 1)
+//	SetDrawEnv xcoord= top,ycoord= left,textrgb= (65535,65535,65535);DelayUpdate
+	SetDrawEnv  xcoord= top, ycoord= left,linefgc= (65535,65535,65535),linethick= 5.00
+	variable V_widthx=V_nx*V_dx
+	variable V_widthy=V_ny*V_dy	
+	variable V_offsetx=V_widthx*V_offsetCoef
+	variable V_offsety=V_widthy*V_offsetCoef
+	variable V_x1, V_x2, V_y1, V_y2
+	switch(F_pos)
+		case 0:
+			V_x2=V_widthx-V_offsetx
+			V_x1=V_widthx-V_offsetx-V_length
+			V_y1=V_widthy-V_offsety
+			V_y2=V_widthy-V_offsety
+			break
+		case 1:
+			V_x2=V_offsetx+V_length
+			V_x1=V_offsetx
+			V_y1=V_widthy-V_offsety
+			V_y2=V_widthy-V_offsety
+			break
+		default:	
+			
+	endswitch
+	
+	DrawLine V_x1, V_y1, V_x2, V_y2
+	
+	variable V_x3, V_y3
+	V_x3=(V_x1+V_x2)/2
+	V_y3=(V_y1+V_y2)/2
+	SetDrawEnv xcoord= top,ycoord= left,textxjust=1, textrgb= (65535,65535,65535)
+	SetDrawEnv fname= "メイリオ",fsize= 15;
+	DrawText V_x3,V_y3,num2str(V_length)+waveunits(M_Src, 0)	
+
+end
+
+
+function MIP2wave(W_src, S_unitx, S_unity)
+	wave W_src
+	string S_unitx, S_unity
+	DeletePoints/M=1 0,2, W_src
+	SetScale/P x W_src[0][1],W_src[1][1]-W_src[0][1],S_unitx, W_src
+	SetScale d 0,0,S_unity, W_src
+	DeletePoints/M=1 1,1, W_src
+	Redimension/N=-1 W_src
+end
+
