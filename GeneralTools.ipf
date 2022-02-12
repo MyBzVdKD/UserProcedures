@@ -1,4 +1,4 @@
-//20200430
+//20200727
 Function /S num2strD(num)
 	variable /D num
 	string sval
@@ -1084,5 +1084,120 @@ function MIP2wave(W_src, S_unitx, S_unity)
 	SetScale d 0,0,S_unity, W_src
 	DeletePoints/M=1 1,1, W_src
 	Redimension/N=-1 W_src
+end
+
+function /Wave findpeaksPosNeg(W_src, SWN_peakList, V_box, V_StatX, V_EndX, F_integerP, F_Pos, F_Neg)
+	wave W_src
+	string SWN_peakList
+	variable V_box, , V_StatX, V_EndX, F_integerP, F_Pos, F_Neg
+	duplicate /Free W_src, W_srcAbs
+	make /O/n=(1, 5)$SWN_peakList
+	wave W_peakList=$SWN_peakList
+	SetDimLabel 1, 0, PeakPosP, W_peakList
+	SetDimLabel 1, 1, PeakPosX, W_peakList
+	SetDimLabel 1, 2, peakVal, W_peakList
+	SetDimLabel 1, 3, PeakWidth, W_peakList
+	SetDimLabel 1, 4, TrailingEdgeLoc, W_peakList
+	//R: peakNo, L: 0:PeakPosP. 1: PeakPosX, 2: peakVal, 3:PeakWidth, 4: TrailingEdgeLoc
+	
+	//variable V_n=numpnts(W_src)
+	variable i=0
+	variable V_flag
+	variable V_StatP
+	variable V_EndP=ScaleToIndex(W_src, V_EndX, 0)
+	if(F_Pos)
+		for(V_StatP=ScaleToIndex(W_src, V_StatX, 0);V_flag==0;)
+			FindPeak /R=[V_StatP, V_EndP]/Q/P/B=(V_box) W_srcAbs
+			//print V_StatP, V_EndP
+			if(V_flag==0)
+				W_peakList[i][0]=V_PeakLoc
+				if(F_integerP)
+					W_peakList[i][1]=IndexToScale(W_src, V_PeakLoc, 0)
+				else
+					W_peakList[i][1]=DimOffset(W_src,0) + V_PeakLoc*DimDelta(W_src,0)//IndexToScale(W_src, V_PeakLoc, 0)
+				endif
+				W_peakList[i][2]=W_src[V_PeakLoc]
+				W_peakList[i][3]=V_PeakWidth
+				W_peakList[i][4]=V_TrailingEdgeLoc	
+				InsertPoints/M=0 i+1,1, W_peakList	
+				i+=1;V_StatP=V_PeakLoc+1
+			endif
+		endfor
+	endif
+	if(F_Neg)
+		for(V_StatP=ScaleToIndex(W_src, V_StatX, 0),V_flag=0;V_flag==0;)
+			FindPeak /R=[V_StatP, V_EndP]/Q/P/B=(V_box)/N W_srcAbs
+		//	print V_StartP
+			if(V_flag==0)
+				W_peakList[i][0]=V_PeakLoc
+				if(F_integerP)
+					W_peakList[i][1]=IndexToScale(W_src, V_PeakLoc, 0)
+				else
+					W_peakList[i][1]=DimOffset(W_src,0) + V_PeakLoc*DimDelta(W_src,0)//IndexToScale(W_src, V_PeakLoc, 0)
+				endif
+				W_peakList[i][2]=W_src[V_PeakLoc]
+				W_peakList[i][3]=V_PeakWidth
+				W_peakList[i][4]=V_TrailingEdgeLoc	
+				InsertPoints/M=0 i+1,1, W_peakList	
+				i+=1;V_StatP=V_PeakLoc+1
+	
+			endif
+		endfor
+	endif
+	DeletePoints i,1, W_peakList
+	SortMatrixCol2(W_peakList, 0, 0, 2, 0.1)
+	//SortMatrixCol(W_peakList, 0, 0, -1, 0.1)
+	//print i
+	return W_peakList
+end
+
+function SortMatrixCol2(M_src, F_sortkey, F_RevSort, F_ZapSimilar, V_percent)
+	wave M_src
+	variable F_sortkey, F_RevSort, F_ZapSimilar, V_percent
+	duplicate /free/O M_src, W_sortkey
+	Redimension/N=(-1,0) W_sortkey
+	W_sortkey[]=M_src[p][F_sortkey]//W_PeakInfo[p][1]*W_PeakInfo[p][2]
+	
+	if(F_RevSort)//big -> small
+		SortColumns /R keyWaves=W_sortkey,sortWaves=M_src
+	else//small -> big
+		SortColumns keyWaves=W_sortkey,sortWaves=M_src
+	endif
+	//end
+	if(F_ZapSimilar!=-1)//Colum No for marge
+	variable V_nR=DimSize(M_src, 0)
+	variable V_nC=DimSize(M_src, 1)
+	//print V_nR, V_nC
+	variable i, j
+	wavestats/Q/RMD=[][2] M_src
+	variable V_VariationRange=V_max-V_min
+	variable V_Sval, V_Eval
+	for(i=1,V_Sval=0,V_Eval=1;i<=V_nR;i+=1)
+		//print i, V_sval, V_Eval, V_VariationRange*V_percent*0.01,abs(M_src[V_Sval][F_ZapSimilar]-M_src[i][F_ZapSimilar])
+		if(V_VariationRange*V_percent*0.01<abs(M_src[V_Sval][F_ZapSimilar]-M_src[i][F_ZapSimilar])||i==V_nR)
+			if(i-V_Sval!=1)
+			 	//print "2"
+			 	//print V_Sval,V_Eval
+				for(j=0;j<V_nC;j+=1)
+					wavestats /Q/RMD=[V_Sval,V_Eval][j] M_src
+					//print M_src[V_Eval][j], M_src[V_Sval][j] ,V_avg
+					M_src[V_Sval][j]=V_avg
+					//print V_Sval,j
+				endfor
+				DeletePoints V_Sval+1, V_Eval-V_Sval, M_src
+				i-=V_Eval-V_Sval
+				V_nR-=V_Eval-V_Sval
+				V_Sval=i+1//;print i
+			else
+				//print 1
+				V_Sval=i
+				V_Eval=i+1
+			endif		
+		else
+			//print 3
+			V_Eval=i
+		endif
+	endfor
+	endif
 end
 
