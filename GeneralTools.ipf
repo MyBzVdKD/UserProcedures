@@ -1,4 +1,4 @@
-//20200727
+//20200727//20220721
 Function /S num2strD(num)
 	variable /D num
 	string sval
@@ -1201,3 +1201,28 @@ function SortMatrixCol2(M_src, F_sortkey, F_RevSort, F_ZapSimilar, V_percent)
 	endif
 end
 
+Function/S NumToHex4(num)
+    Variable num            // 16bit valeur
+ 
+    String text
+    sprintf text, "%4x", num
+    return text
+End
+ 
+Function HighBitDec4(num)
+    variable num
+    variable a
+    String text = NumToHex4(num) 
+    String high = text[0,1]
+    sscanf high, "%x",a
+    return a
+End
+
+Function LowBitDec4(num)
+    variable num
+    variable a
+    String text = NumToHex4(num) 
+    String low = text[2,3]
+    sscanf low, "%x",a
+    return a
+End
