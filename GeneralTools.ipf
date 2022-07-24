@@ -1226,3 +1226,43 @@ Function LowBitDec4(num)
     sscanf low, "%x",a
     return a
 End
+
+function /S TWave2List_2Dcolumn(W_src, V_colNo, F_rev)
+	wave /T W_src
+	variable V_colNo
+	variable F_rev
+	variable V_n=dimsize(W_src, 0)
+	string L_dest=""
+	variable i
+	if(F_rev)
+		for(i=0;i<V_n;i+=1)
+			print i
+			L_dest=AddListItem(W_src[i][V_colNo], L_dest)
+		endfor	
+	else
+		for(i=V_n-1;i>=0;i-=1)
+			L_dest=AddListItem(W_src[i][V_colNo], L_dest)
+		endfor
+	endif
+	return L_dest
+end
+
+function /S Wave2List_2Dcolumn(W_src, V_colNo, F_rev)
+	wave W_src
+	variable V_colNo
+	variable F_rev
+	variable V_n=dimsize(W_src, 0)
+	string L_dest=""
+	variable i
+	if(F_rev)
+		for(i=0;i<V_n;i+=1)
+			print i
+			L_dest=AddListItem(num2str(W_src[i][V_colNo]), L_dest)
+		endfor	
+	else
+		for(i=V_n-1;i>=0;i-=1)
+			L_dest=AddListItem(num2str(W_src[i][V_colNo]), L_dest)
+		endfor
+	endif
+	return L_dest
+end
