@@ -70,17 +70,17 @@ Window SR400_PhotonCounter() : Panel
 	SetVariable ContPeriod,limits={1e-07,90000,0.001},value= V_CountPeriod
 	PopupMenu CountingDigit,pos={273,119},size={153,23},proc=PM_SR400_CountingRange,title="CountingDigit(<1E)"
 	PopupMenu CountingDigit,font="Arial"
-	PopupMenu CountingDigit,mode=7,popvalue="4",value= #"\"10;9;8;7;6;5;4;LOG\""
+	PopupMenu CountingDigit,mode=7,popvalue="4",value= #"(J\(B"10;9;8;7;6;5;4;LOG(J\(B""
 	PopupMenu CountMode,pos={18,17},size={148,23},proc=PM_SR400_CountMode,title="CountMode"
 	PopupMenu CountMode,font="Arial"
-	PopupMenu CountMode,mode=1,popvalue="A, BforT",value= #"\"A, BforT;A-BforT;A+BforT;AforB\""
+	PopupMenu CountMode,mode=1,popvalue="A, BforT",value= #"(J\(B"A, BforT;A-BforT;A+BforT;AforB(J\(B""
 	TabControl TB_SelectCounter,pos={26,51},size={234,21},proc=T_SR400_SelectCounter
 	TabControl TB_SelectCounter,font="Arial",tabLabel(0)="CounterA"
 	TabControl TB_SelectCounter,tabLabel(1)="CounterB",tabLabel(2)="CounterT"
 	TabControl TB_SelectCounter,value= 2
 	PopupMenu InputSource,pos={35,123},size={147,23},proc=PM_SR400_InputSource,title="InputSource"
 	PopupMenu InputSource,font="Arial"
-	PopupMenu InputSource,mode=2,popvalue="INPUT2",value= #"\"10MHz(internal);INPUT2;TRIG\""
+	PopupMenu InputSource,mode=2,popvalue="INPUT2",value= #"(J\(B"10MHz(internal);INPUT2;TRIG(J\(B""
 	TabControl TB_BackPortSelect,pos={383,257},size={145,24},proc=T_SR400_SelectBackPort
 	TabControl TB_BackPortSelect,font="Arial",tabLabel(0)="Port1"
 	TabControl TB_BackPortSelect,tabLabel(1)="Port2",value= 1
@@ -90,11 +90,11 @@ Window SR400_PhotonCounter() : Panel
 	CheckBox ContMode,pos={278,79},size={78,15},proc=CP_SR400_CycleMode,title="CycleMode"
 	CheckBox ContMode,font="Arial",value= 0
 	PopupMenu DA_out,pos={279,55},size={108,23},proc=PM_SR400_DASource,title="D/A Output"
-	PopupMenu DA_out,font="Arial",mode=1,popvalue="A",value= #"\"A;B\""
+	PopupMenu DA_out,font="Arial",mode=1,popvalue="A",value= #"(J\(B"A;B(J\(B""
 	CheckBox DisplayMode,pos={358,78},size={85,15},proc=CP_SR400_DisplayMode,title="HoldDisplay"
 	CheckBox DisplayMode,font="Arial",value= 0
 	PopupMenu DscrSlope,pos={34,101},size={125,23},proc=PM_SR400_DscrSlope,title="DscrSlope"
-	PopupMenu DscrSlope,font="Arial",mode=1,popvalue="RISE",value= #"\"RISE;FALL\""
+	PopupMenu DscrSlope,font="Arial",mode=1,popvalue="RISE",value= #"(J\(B"RISE;FALL(J\(B""
 	CheckBox SR400_GPIB,pos={348,21},size={46,15},proc=C_SR400_GPIB,title="GPIB"
 	CheckBox SR400_GPIB,font="Arial",value= 1
 	Button GetCurrentConfig,pos={404,21},size={128,19},proc=BP_SR400_GetCurrentConfig,title="Get Current Config"
@@ -117,7 +117,7 @@ Window SR400_PhotonCounter() : Panel
 	Button StartScan,font="Arial"
 	PopupMenu SR400_GateMode,pos={43,216},size={115,23},disable=1,proc=PM_SR400_GateMode,title="GateMode"
 	PopupMenu SR400_GateMode,font="Arial"
-	PopupMenu SR400_GateMode,mode=1,popvalue="CW",value= #"\"CW;FIXED;SCAN\""
+	PopupMenu SR400_GateMode,mode=1,popvalue="CW",value= #"(J\(B"CW;FIXED;SCAN(J\(B""
 	SetVariable SR400_GeteScanStep,pos={43,246},size={135,18},disable=1,proc=SV_SR400_GateScanStep,title="ScanStep"
 	SetVariable SR400_GeteScanStep,labelBack=(65535,65535,65535),font="Arial"
 	SetVariable SR400_GeteScanStep,format="%.1W0Ps"
@@ -191,7 +191,7 @@ Function T_SR400_SelectCounter(ctrlName,tabNum) : TabControl
 	wave W_SR400_StatusValue
 	SetVariable SR400_DiscrLevel value=W_SR400_StatusValue[23+tabNum], win=SR400_PhotonCounter
 	PopupMenu DscrSlope mode=W_SR400_StatusValue[14+tabNum]+1, win=SR400_PhotonCounter
-	PopupMenu InputSource mode=W_SR400_StatusValue[3+tabNum]+1, win=SR400_PhotonCounter//W_SR400_StatusValue[3+tabNum]‚Æ‚Ì®‡«
+	PopupMenu InputSource mode=W_SR400_StatusValue[3+tabNum]+1, win=SR400_PhotonCounter//W_SR400_StatusValue[3+tabNum]$B$H$N@09g@-(B
 	SR400_RestrictInputSources("T_SR400_SelectCounter")
 	C_SR400_ScanMode("T_SR400_SelectCounter",SR400_GetConfig(17+tabNum))
 	SetVariable SR400_ScanStep value=W_SR400_StatusValue[20+tabNum], win=SR400_PhotonCounter
@@ -300,13 +300,10 @@ Function PM_SR400_DASource(ctrlName,popNum,popStr) : PopupMenuControl
 	variable F_GPIB=SR400_GetConfig(41)//GPIBFlag
 	variable F_stats
 	SR400_OverWriteConfig(I_config, popNum-1)
-	F_stats=SR400_DASource("PM_CntMoT A L ~ 3 . H T M       ïˆ    p Z     ’„    kà€ƒÉQ ¸)JÉkà€ƒÉê\Å¨‰êÊ        &1             I N S T A L ~ 4 . H T M       ðˆ    ˜ „     ’„    kà€ƒÉQ ¸)JÉkà€ƒÉD¿Ç¨‰êÊ       (             !I n t e r l e a v e d - a n d - s p l i t - a r r a y s . h t m l     ðˆ    p Z     ’„    kà€ƒÉQ ¸)JÉkà€ƒÉD¿Ç¨‰êÊ       (             I N T E R L ~ 1 . H T M       ñˆ    x d     ’„    kà€ƒÉQ ¸)JÉkà€ƒÉž!Ê¨‰êÊ        s*             I n t r o d u c t i o n . h 
- on CP_SR400_DisplayMode(ctrlName,checked) : CheckBoxControl
-	String ctrlName
+	F_stats=SR400_DASource("PM_CntMoT", popStr, 1, F_GPIB)
 	Variable checked
-	variable F_GPIB=SR400_GetConfig(41)//GPIBFlag
-	variable I_config=11//DisplayMode
-	variable F_stats
+	F_GPIB=SR400_GetConfig(41)//GPIBFlag
+	I_config=11//DisplayMode
 	F_stats=SR400_DisplayMode("CP_SR400_DisplayMode", checked, 0, F_GPIB)
 	CheckBox DisplayMode value=F_stats
 	SR400_OverWriteConfig(I_config, F_stats)

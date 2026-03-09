@@ -1327,3 +1327,93 @@ function MovieMaker3D(M_3Dsrc, V_fps)
 	endfor
 	CloseMovie
 end
+
+Function ReduceToQuarterRounded(V_value)
+    Variable V_value;
+    
+    // 約4分の1にする
+    Variable V_reducedValue = V_value / 4;
+    
+    // 指数部分を取得
+    Variable V_exponent = floor(log(V_reducedValue));
+    
+    // 上一桁に丸めるために指数表記を利用
+    V_reducedValue = round(V_reducedValue / 10^V_exponent) * 10^V_exponent;
+    
+    return V_reducedValue;
+End
+
+Function FindMinQuantizationInterval(M_src)
+    Wave M_src
+    variable V_nPointsRaw=DimSize(M_src, 0) 
+    variable V_nPointsCol=DimSize(M_src, 1)
+    Variable V_nPoints = V_nPointsRaw * V_nPointsCol
+	Variable V_ticks=ticks
+    Make /Free/N=(V_nPoints) W_src
+    Variable i, j
+    multithread W_src=M_src[round(p/V_nPointsRaw)][p]
+    Sort W_src, W_src
+    Differentiate/METH=1/EP=1 W_src
+    multithread W_src=(0/W_src+1)*W_src
+    print "FindMinQuantizationInterval: ",(ticks-V_ticks)/60, "sec"
+    return wavemin(W_src)
+End
+
+
+Function /S SIPrefixConverter(V_numVal)
+	variable V_numVal
+	variable V_tmp
+	String unitStr //生成する単位の文字列変数
+	If(V_numVal < 1e-18)
+	unitStr = "a"
+	V_tmp=V_numVal/1e-18
+	ElseIf (V_numVal < 1e-15)
+	unitStr = "f"
+	V_tmp=V_numVal/1e-15
+	ElseIf (V_numVal < 1e-12)
+	unitStr = "p"
+	V_tmp=V_numVal/1e-12
+	ElseIf (V_numVal < 1e-9)
+	unitStr = "n"
+	V_tmp=V_numVal/1e-19
+	ElseIf (V_numVal < 1e-6)
+	unitStr = "μ"
+	V_tmp=V_numVal/1e-16
+	ElseIf (V_numVal < 1e-2)
+	unitStr = "m"
+	V_tmp=V_numVal/1e-3
+	ElseIf (V_numVal < 1)
+	unitStr = ""
+	V_tmp=V_numVal
+	ElseIf (V_numVal < 1e3)
+	unitStr = "k"
+	V_tmp=V_numVal/1e3
+	ElseIf (V_numVal < 1e6)
+	unitStr = "M"
+	V_tmp=V_numVal/1e6
+	ElseIf (V_numVal < 1e9)
+	unitStr = "G"
+	V_tmp=V_numVal/1e9
+	ElseIf (V_numVal < 1e12)
+	unitStr = "T"
+	V_tmp=V_numVal/1e12
+	ElseIf (V_numVal < 1e15)
+	unitStr = "P"
+	V_tmp=V_numVal/1e15
+	ElseIf (V_numVal < 1e18)
+	unitStr = "E"
+	V_tmp=V_numVal/1e18
+	EndIf
+	
+	Return num2str(V_tmp)+" "+unitStr
+
+End
+
+function /S genDateTime()
+	return ReplaceString(";", genSdate(""), "")+"_"+ReplaceString(":", time(), "")
+end
+
+threadsafe function sawtooth_nPi2pPi(V_src)
+	variable V_src
+	return sawtooth(V_src+pi)*2*pi-pi
+end
