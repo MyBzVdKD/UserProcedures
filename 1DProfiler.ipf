@@ -59,10 +59,10 @@ Window CP_Slice_2Dimage() : Panel
 	Slider SLD_Volume_pos,pos={346,490},size={230,53},proc=S_VolumeExtPos
 	Slider SLD_Volume_pos,font="Verdana"
 	Slider SLD_Volume_pos,limits={-0.0125,0.01249,1e-05},value= -0.00721,vert= 0,ticks= 20,thumbColor= (65280,43520,0)
-	SetVariable SV_Volume_pnt,pos={346,473},size={148,14},title="Position"
+	SetVariable SV_Volume_pnt,pos={346,473},size={148,14},proc=SV_VolumePoint,title="Position"
 	SetVariable SV_Volume_pnt,font="Verdana",format="%g pnt"
 	SetVariable SV_Volume_pnt,limits={0,2499,1},value= Cfg_Profiler[19]
-	SetVariable SV_Volume_pos,pos={497,474},size={68,14},title="=",font="Verdana"
+	SetVariable SV_Volume_pos,pos={497,474},size={68,14},proc=SV_VolumePosition,title="=",font="Verdana"
 	SetVariable SV_Volume_pos,format="%g sec"
 	SetVariable SV_Volume_pos,limits={-0.0125,0.01249,1e-05},value= Cfg_Profiler[21]
 	Display/W=(406,46,564,254)/HOST=#  W_Profile_A2
